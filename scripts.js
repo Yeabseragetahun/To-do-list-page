@@ -1,56 +1,38 @@
-document.addEventListener('DOMContentLoaded', () => {
-    const newTaskForm = document.getElementById('new-task-form');
-    const newTaskInput = document.getElementById('new-task-input');
-    const tasksList = document.getElementById('tasks-list');
+function addTask() {
+    const taskInput = document.getElementById('new-task');
+    const taskText = taskInput.value.trim();
+    if (taskText) {
+        const taskList = document.getElementById('task-list');
 
-    newTaskForm.addEventListener('submit', e => {
-        e.preventDefault();
-        addTask(newTaskInput.value);
-        newTaskInput.value = '';
-    });
-
-    function addTask(task) {
-        const taskItem = document.createElement('li');
-        taskItem.classList.add('task-item');
-
-        const taskSpan = document.createElement('span');
-        taskSpan.classList.add('task');
-        taskSpan.innerText = task;
-
-        const editButton = document.createElement('button');
-        editButton.classList.add('edit');
-        editButton.innerText = 'Edit';
-        editButton.addEventListener('click', () => editTask(taskSpan));
-
-        const deleteButton = document.createElement('button');
-        deleteButton.classList.add('delete');
-        deleteButton.innerText = 'Delete';
-        deleteButton.addEventListener('click', () => deleteTask(taskItem));
-
-        const completeButton = document.createElement('button');
-        completeButton.classList.add('complete');
-        completeButton.innerText = 'Complete';
-        completeButton.addEventListener('click', () => completeTask(taskSpan));
-
-        taskItem.appendChild(taskSpan);
-        taskItem.appendChild(completeButton);
-        taskItem.appendChild(editButton);
-        taskItem.appendChild(deleteButton);
-        tasksList.appendChild(taskItem);
+        const li = document.createElement('li');
+        li.innerHTML = `
+            <span>${taskText}</span>
+            <div class="actions">
+                <button onclick="editTask(this)">Edit</button>
+                <button onclick="deleteTask(this)">Delete</button>
+                <button onclick="markCompleted(this)">Complete</button>
+            </div>
+        `;
+        taskList.appendChild(li);
+        taskInput.value = '';
     }
+}
 
-    function editTask(task) {
-        const newTask = prompt('Edit your task:', task.innerText);
-        if (newTask) {
-            task.innerText = newTask;
-        }
-    }
+function deleteTask(button) {
+    const li = button.parentElement.parentElement;
+    li.remove();
+}
 
-    function deleteTask(task) {
-        tasksList.removeChild(task);
+function editTask(button) {
+    const li = button.parentElement.parentElement;
+    const span = li.querySelector('span');
+    const newTaskText = prompt('Edit your task', span.textContent);
+    if (newTaskText !== null && newTaskText.trim()) {
+        span.textContent = newTaskText.trim();
     }
+}
 
-    function completeTask(task) {
-        task.classList.toggle('completed');
-    }
-});
+function markCompleted(button) {
+    const li = button.parentElement.parentElement;
+    li.classList.toggle('completed');
+}
